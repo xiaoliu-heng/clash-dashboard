@@ -12,6 +12,7 @@ interface InputProps extends BaseComponentProps {
     autoFocus?: boolean
     type?: string
     disabled?: boolean
+    placeholder?: string
     onChange?: (value: string, event?: ChangeEvent<HTMLInputElement>) => void
     onEnter?: (event?: KeyboardEvent<HTMLInputElement>) => void
     onBlur?: (event?: FocusEvent<HTMLInputElement>) => void
@@ -27,6 +28,7 @@ export function Input (props: InputProps) {
         autoFocus = false,
         type = 'text',
         disabled = false,
+        placeholder,
         onChange = noop,
         onBlur = noop,
         onEnter = noop,
@@ -45,6 +47,7 @@ export function Input (props: InputProps) {
             className={classname}
             style={style}
             value={value}
+            placeholder={placeholder}
             autoFocus={autoFocus}
             type={type}
             onChange={event => onChange(event.target.value, event)}

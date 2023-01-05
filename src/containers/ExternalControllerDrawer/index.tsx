@@ -8,26 +8,26 @@ import { useI18n, useAPIInfo, identityAtom } from '@stores'
 import { localStorageAtom } from '@stores/request'
 import './style.scss'
 
-export default function ExternalController () {
+export default function ExternalController() {
     const { translation } = useI18n()
     const { t } = translation('Settings')
-    const { hostname, port, secret } = useAPIInfo()
+    const { protocol, hostname, port, secret } = useAPIInfo()
     const [identity, setIdentity] = useAtom(identityAtom)
     const [value, set] = useObject({
-        hostname: '',
-        port: '',
-        secret: '',
+        secret: secret,
+        url: `${protocol}//${hostname}:${port}`
     })
-
-    useEffect(() => {
-        set({ hostname, port, secret })
-    }, [hostname, port, secret, set])
 
     const setter = useUpdateAtom(localStorageAtom)
 
-    function handleOk () {
-        const { hostname, port, secret } = value
-        setter([{ hostname, port, secret }])
+    function handleOk() {
+        const { url, secret } = value
+        try {
+            const res = new URL(url.startsWith("http") ? url : `http://${url}`);
+            setter([{ hostname: res.hostname, port: res.port, protocol: res.protocol, secret }])
+        } catch {
+            console.error(`url eroor: ${url}, should be like http://127.0.0.1:9090`)
+        }
     }
 
     return (
@@ -42,25 +42,14 @@ export default function ExternalController () {
                 <p>{t('externalControllerSetting.note')}</p>
             </Alert>
             <div className="flex items-center">
-                <span className="my-1 w-14 font-bold md:my-3">{t('externalControllerSetting.host')}</span>
+                <span className="my-1 w-14 font-bold md:my-3">{t('externalControllerSetting.url')}</span>
                 <Input
                     className="my-1 flex-1 md:my-3"
                     align="left"
+                    placeholder="http://127.0.0.1:9090"
                     inside={true}
-                    value={value.hostname}
-                    onChange={hostname => set('hostname', hostname)}
-                    onEnter={handleOk}
-                />
-            </div>
-            <div className="flex items-center">
-                <div className="my-1 w-14 font-bold md:my-3">{t('externalControllerSetting.port')}</div>
-                <Input
-                    className="my-1 w-14 flex-1 md:my-3"
-                    align="left"
-                    inside={true}
-                    value={value.port}
-                    onChange={port => set('port', port)}
-                    onEnter={handleOk}
+                    value={value.url}
+                    onChange={url => set('url', url)}
                 />
             </div>
             <div className="flex items-center">
@@ -71,7 +60,6 @@ export default function ExternalController () {
                     inside={true}
                     value={value.secret}
                     onChange={secret => set('secret', secret)}
-                    onEnter={handleOk}
                 />
             </div>
         </Modal>
