@@ -20,6 +20,7 @@ const clashxConfigAtom = atom(async () => {
 })
 
 export const localStorageAtom = atomWithStorage<Array<{
+    protocol: string
     hostname: string
     port: string
     secret: string

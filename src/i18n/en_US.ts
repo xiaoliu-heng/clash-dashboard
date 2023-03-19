@@ -37,6 +37,7 @@ const EN = {
             host: 'Host',
             port: 'Port',
             secret: 'Secret',
+            url: 'Url',
         },
     },
     Logs: {

@@ -37,6 +37,7 @@ const CN = {
             host: 'Host',
             port: '端口',
             secret: '密钥',
+            url: '链接',
         },
     },
     Logs: {
